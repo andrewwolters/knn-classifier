@@ -18,20 +18,36 @@ class Dataset
 		 */
 		class Item
 		{
+			protected:
+				double *features;
+				int classLabel;
+				
 			public:
 				/**
-				 * Distance
+				 * Get class label
 				 *
-				 * Calculate distance to an other item.
-				 *
-				 * @return Distance
+				 * @return Label
 				 */
-				virtual double distance(Item *other) = 0;
+				int getClassLabel() const
+				{
+					return classLabel;
+				}
+				
+				/**
+				 * Get features
+				 *
+				 * @return Features
+				 */
+				const double* getFeatures() const
+				{
+					return features;
+				}
 		};
 	
 	protected:
 		Item *data;
 		size_t dataSize;
+		size_t numberOfFeature;
 	
 	public:
 		/**
