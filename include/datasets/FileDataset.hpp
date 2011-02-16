@@ -2,6 +2,8 @@
 #define FileDataset__
 
 #include <kNN/Dataset.hpp>
+#include <string>
+#include <datasets/FileDatasetException.hpp>
 
 /**
  * File dataset class
@@ -16,7 +18,29 @@ class FileDataset : public Dataset
 		 *
 		 * @param File
 		 */
-		FileDataset(const char *file);
+		FileDataset(const char *file) throw(FileDatasetException);
+		
+		/**
+		 * Destructor
+		 */
+		~FileDataset();
+	
+	protected:
+		/**
+		 * Parse line
+		 *
+		 * @param Line
+		 * @return Stimulus pointer
+		 */
+		Stimulus* parseLine(const std::string& line);
+		
+		/**
+		 * Parse first line
+		 *
+		 * @param Line
+		 * @return Stimulus pointer
+		 */
+		Stimulus* parseFirstLine(const std::string& line, const char *file) throw(FileDatasetException);
 };
 
 #endif

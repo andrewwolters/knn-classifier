@@ -2,31 +2,162 @@
 #include <fstream>
 #include <cassert>
 #include <cstdlib>
+#include <vector>
+#include <sstream>
 
-/*
-void FileDataset::addStimuluss(Stimulus *items, size_t count)
+#define STIMULUS_BUFFER_SIZE 100
+
+FileDataset::FileDataset(const char *file) throw(FileDatasetException) : Dataset()
 {
-	// Allocate enough memory
-	size_t oldSize = dataSize;
-	if (data == NULL)
-	{
-		data = (Stimulus*)calloc(count, sizeof(Stimulus));
-		dataSize = count;
-	}
-	else
-	{
-		dataSize += count;
-		data = (Stimulus*)realloc(data, dataSize * sizeof(Stimulus));
-	}
-	assert(data != NULL);
+	// Open file
+	std::ifstream ifs(file);
 	
-	// Add items
-	memcpy(data + oldSize, items, count);
+	// First line
+	std::string line;
+	std::getline(ifs, line);
+	Stimulus *stimulus = parseFirstLine(line, file);
+	
+	// Create dataset in blocks
+	stimuli = (Stimulus**)calloc(STIMULUS_BUFFER_SIZE, sizeof(Stimulus*));
+	assert(stimuli);
+	Stimulus **stimuliIt = stimuli;
+	*stimuliIt = stimulus;
+	++stimuliIt;
+	size_t blockSize = 1;
+	stimulusCount = 1;
+	
+	// Read rest lines
+	while (std::getline(ifs, line) && !line.empty())
+	{
+		// Buffer full?
+		if (blockSize >= STIMULUS_BUFFER_SIZE)
+		{
+			// Resize
+			stimuli = (Stimulus**)realloc(stimuli, (stimulusCount + STIMULUS_BUFFER_SIZE) * sizeof(Stimulus*));
+			assert(stimuli);
+			stimuliIt = stimuli + stimulusCount;
+			
+			// Reset
+			blockSize = 0;
+		}
+	
+		// Parse line
+		*stimuliIt = parseLine(line);
+		++stimuliIt;
+		
+		// Higher counters
+		++stimulusCount;
+		++blockSize;
+	}
+	
+	// Close file
+	ifs.close();
 }
-*/
 
-FileDataset::FileDataset(const char *file) : Dataset()
+FileDataset::~FileDataset()
 {
-	// TODO
-	// load dataset from file
+	// Free stimuli
+	for (size_t i = 0; i < stimulusCount; ++i)
+	{
+		delete stimuli[i];
+	}
+	free(stimuli);
+}
+
+Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
+{
+	// Alloc features list
+	double *features = (double*)calloc(featureCount, sizeof(double));
+	double *featuresIt = features;
+	
+	// Parse parts
+	std::stringstream ss(line);
+	double last;
+	bool first = true;
+	size_t i = 0;
+	std::string classLabel;
+	while (ss >> classLabel)
+	{
+		if (first)
+		{
+			first = false;
+		}
+		else
+		{
+			// Too many features?
+			++i;
+			if (i > featureCount)
+			{
+				std::stringstream message;
+				message << "Invalid feature count on line " << (stimulusCount + 1) << ": " << line;
+				throw FileDatasetException(message.str());
+			}
+			
+			// Append feature
+			*featuresIt = last;
+			++featuresIt;
+		}
+		last = strtod(classLabel.c_str(), NULL);
+	}
+	
+	// Too less features?
+	if (i < featureCount)
+	{
+		std::stringstream message;
+		message << "Invalid feature count on line " << (stimulusCount + 1) << ": " << line;
+		throw FileDatasetException(message.str());
+	}
+	
+	// Add to class labels?
+	classLabels.push_back(classLabel);
+	classLabels.unique();
+	// TODO ^ optimize
+	
+	// Make stimulus
+	Stimulus *stimulus = new Stimulus(features, featureCount, classLabel);
+	assert(stimulus);
+	
+	// Free features
+	free(features);
+	
+	return stimulus;
+}
+
+Dataset::Stimulus* FileDataset::parseFirstLine(const std::string& line, const char *file) throw(FileDatasetException)
+{
+	std::vector<double> features;
+	std::string classLabel;
+	
+	// Parse parts
+	std::stringstream ss(line);
+	double last;
+	bool first = true;
+	while (ss >> classLabel)
+	{
+		if (first)
+		{
+			first = false;
+		}
+		else
+		{
+			features.push_back(last);
+		}
+		last = strtod(classLabel.c_str(), NULL);
+	}
+	
+	// Set feature count
+	featureCount = features.size();
+	if (featureCount < 1)
+	{
+		throw FileDatasetException(file);
+	}
+	
+	// Add to class labels
+	classLabels.push_back(classLabel);
+	
+	// Make stimulus
+	Stimulus *stimulus = new Stimulus(&features.front(), featureCount, classLabel);
+	assert(stimulus);
+	
+	return stimulus;
 }

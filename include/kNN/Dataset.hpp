@@ -2,6 +2,8 @@
 #define Dataset__
 
 #include <cstring>
+#include <string>
+#include <list>
 
 /**
  * Dataset (base) class
@@ -12,23 +14,31 @@ class Dataset
 {
 	public:
 		/**
-		 * Item base class
+		 * Stimulus class
 		 *
 		 * @author Leon van der Veen
 		 */
-		class Item
+		class Stimulus
 		{
 			protected:
 				double *features;
-				int classLabel;
+				std::string classLabel;
 				
 			public:
+				/**
+				 * Constructor
+				 *
+				 * @param Features pointer
+				 * @param Feature count
+				 */
+				Stimulus(const double *features, size_t featureCount, const std::string& classLabel);
+				
 				/**
 				 * Get class label
 				 *
 				 * @return Label
 				 */
-				int getClassLabel() const
+				const std::string& getClassLabel() const
 				{
 					return classLabel;
 				}
@@ -42,68 +52,112 @@ class Dataset
 				{
 					return features;
 				}
+				
+				/**
+				 * Get feature
+				 *
+				 * @param Index
+				 * @return Features
+				 */
+				const double getFeature(size_t index) const
+				{
+					return features[index];
+				}
 		};
 	
 	protected:
-		Item *data;
-		size_t dataSize;
-		size_t numberOfFeature;
+		Stimulus **stimuli;
+		size_t stimulusCount;
+		size_t featureCount;
+		std::list<std::string> classLabels;
 	
 	public:
 		/**
 		 * Constructor
 		 */
 		Dataset() :
-			data(NULL), dataSize(0)
+			stimuli(NULL), stimulusCount(0), featureCount(0)
 		{
+		}
+	
+		/**
+		 * Get class labels
+		 *
+		 * @return Class labels
+		 */
+		const std::list<std::string>& getClassLabels() const
+		{
+			return classLabels;
 		}
 		
 		/**
-		 * Add items
+		 * Get feature count
 		 *
-		 * @param Items
-		 * @param Count
+		 * @return Feature count
 		 */
-		void addItems(Item *items, size_t count);
-		
-		/**
-		 * Add item
-		 *
-		 * @param Item
-		 */
-		void addItem(Item *item)
+		size_t getFeatureCount() const
 		{
-			addItems(item, 1);
+			return featureCount;
 		}
 		
 		/**
-		 * Get data
+		 * Get stimulus
 		 *
-		 * @return Data pointer
+		 * @param Index
+		 * @return Stimuli pointer or NULL on invalid index
 		 */
-		const Item* getData() const
+		Stimulus* getStimulus(size_t index) const
 		{
-			return data;
+			if (index >= stimulusCount)
+			{
+				return NULL;
+			}
+			return stimuli[index];
 		}
 		
 		/**
-		 * Get data
+		 * Get stimulus
 		 *
-		 * @return Data pointer
+		 * @param Index
+		 * @return Stimuli pointer or NULL on invalid index
 		 */
-		Item* getData()
+		Stimulus* getStimulus(size_t index)
 		{
-			return data;
+			if (index >= stimulusCount)
+			{
+				return NULL;
+			}
+			return stimuli[index];
 		}
 		
 		/**
-		 * Get data size
+		 * Get stimuli
 		 *
-		 * @return Data size
+		 * @return Stimuli pointer array
 		 */
-		size_t getSize() const
+		Stimulus** getStimuli() const
 		{
-			return dataSize;
+			return stimuli;
+		}
+		
+		/**
+		 * Get stimuli
+		 *
+		 * @return Stimuli pointer array
+		 */
+		Stimulus** getStimuli()
+		{
+			return stimuli;
+		}
+		
+		/**
+		 * Get stimuli count
+		 *
+		 * @return Stimuli count
+		 */
+		size_t getCount() const
+		{
+			return stimulusCount;
 		}
 };
 

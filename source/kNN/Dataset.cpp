@@ -2,22 +2,13 @@
 #include <cassert>
 #include <cstdlib>
 
-void Dataset::addItems(Item *items, size_t count)
+Dataset::Stimulus::Stimulus(const double *features, size_t featureCount, const std::string& classLabel)
 {
-	// Allocate enough memory
-	size_t oldSize = dataSize;
-	if (data == NULL)
-	{
-		data = (Item*)calloc(count, sizeof(Item));
-		dataSize = count;
-	}
-	else
-	{
-		dataSize += count;
-		data = (Item*)realloc(data, dataSize * sizeof(Item));
-	}
-	assert(data != NULL);
+	// Set features
+	this->features = (double*)calloc(featureCount, sizeof(double));
+	assert(this->features);
+	memcpy(this->features, features, featureCount * sizeof(double));
 	
-	// Add items
-	memcpy(data + oldSize, items, count);
+	// Set class label
+	this->classLabel = classLabel;
 }
