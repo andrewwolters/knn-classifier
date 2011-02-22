@@ -100,7 +100,7 @@ Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
 	}
 	
 	// No label?
-	if (!(CLASS_LABELS & node))
+	if (!(CLASS_LABELS & mode))
 	{
 		classLabel = "";
 		
@@ -127,9 +127,12 @@ Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
 	}
 	
 	// Add to class labels?
-	classLabels.push_back(classLabel);
-	classLabels.unique();
-	// TODO ^ optimize
+	if (CLASS_LABELS & mode)
+	{
+		classLabels.push_back(classLabel);
+		classLabels.unique();
+		// TODO ^ optimize
+	}
 	
 	// Make stimulus
 	Stimulus *stimulus = new Stimulus(features, featureCount, classLabel);
@@ -171,7 +174,7 @@ Dataset::Stimulus* FileDataset::parseFirstLine(const std::string& line, const ch
 	}
 	
 	// No label?
-	if (!(CLASS_LABELS & node))
+	if (!(CLASS_LABELS & mode))
 	{
 		classLabel = "";
 		features.push_back(last);
@@ -185,7 +188,10 @@ Dataset::Stimulus* FileDataset::parseFirstLine(const std::string& line, const ch
 	}
 	
 	// Add to class labels
-	classLabels.push_back(classLabel);
+	if (CLASS_LABELS & mode)
+	{
+		classLabels.push_back(classLabel);
+	}
 	
 	// Make stimulus
 	Stimulus *stimulus = new Stimulus(&features.front(), featureCount, classLabel);

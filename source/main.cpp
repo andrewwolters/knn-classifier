@@ -14,8 +14,45 @@ int main(int argc, char* argv[])
 	{
 		// Load data set
 		std::cout << "Loading dataset..." << std::endl;
-		FileDataset dataset(argc > 1 ? argv[1] : "dataset.db");
+		FileDataset::Mode mode = FileDataset::NORMAL;
+		if (argc > 2)
+		{
+			if (strcmp(argv[2], "features") == 0)
+			{
+				mode = FileDataset::FEATURES;
+			}
+			else if (strcmp(argv[2], "labels") == 0)
+			{
+				mode = FileDataset::CLASS_LABELS;
+			}
+		}
+		FileDataset dataset(argc > 1 ? argv[1] : "dataset.db", mode);
 		std::cout << "Loaded " << dataset.getCount() << " items." << std::endl;
+		std::cout << "Loaded labels: ";
+		std::list<std::string>::const_iterator it = dataset.getClassLabels().begin();
+		std::list<std::string>::const_iterator end = dataset.getClassLabels().end();
+		if (it == end)
+		{
+			std::cout << "no labels loaded" << std::endl;
+		}
+		else
+		{
+			bool first = true;
+			for (; it != end; ++it)
+			{
+				if (first)
+				{
+					first = false;
+				}
+				else
+				{
+					std::cout << ", ";
+				}
+				std::cout << *it;
+			}
+			std::cout << std::endl;
+		}
+		std::cout << std::endl;
 		
 		// Show dataset
 		std::cout << "Dataset:" << std::endl;
