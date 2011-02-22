@@ -77,9 +77,23 @@ class Dataset
 		 */
 		Dataset() :
 			stimuli(NULL), stimulusCount(0), featureCount(0)
-		{
-		}
-	
+		{}
+		
+		/**
+		 * Constructor
+		 *
+		 * Create a dataset with a given stimulus count and feature count.
+		 *
+		 * @param Stimulus count
+		 * @param Feature count
+		 */
+		Dataset(size_t count, size_t featureCount_);
+		
+		/**
+		 * Destructor
+		 */
+		~Dataset();
+		
 		/**
 		 * Get class labels
 		 *
@@ -158,6 +172,23 @@ class Dataset
 		size_t getCount() const
 		{
 			return stimulusCount;
+		}
+		
+		/**
+		 * Set stimulus (at)
+		 *
+		 * @param Index
+		 * @param Stimulus
+		 * @return Success or not
+		 */
+		bool setStimulus(size_t index, Stimulus *stimulus)
+		{
+			if (index >= stimulusCount)
+			{
+				return false;
+			}
+			stimuli[index] = stimulus;
+			return true;
 		}
 };
 

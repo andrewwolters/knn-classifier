@@ -14,16 +14,25 @@ class FileDataset : public Dataset
 {
 	public:
 		/**
+		 * Mode
+		 */
+		enum Mode
+		{
+			FEATURES		= 1, // only features
+			CLASS_LABELS	= 2, // only class labels
+			NORMAL			= 3  // features and class labels
+		};
+	
+	protected:
+		Mode mode;
+	
+	public:
+		/**
 		 * Constructor
 		 *
 		 * @param File
 		 */
-		FileDataset(const char *file) throw(FileDatasetException);
-		
-		/**
-		 * Destructor
-		 */
-		~FileDataset();
+		FileDataset(const char *file, Mode mode = NORMAL) throw(FileDatasetException);
 	
 	protected:
 		/**

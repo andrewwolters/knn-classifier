@@ -7,7 +7,9 @@
 
 #define STIMULUS_BUFFER_SIZE 100
 
-FileDataset::FileDataset(const char *file) throw(FileDatasetException) : Dataset()
+FileDataset::FileDataset(const char *file, Mode mode_) throw(FileDatasetException) :
+	Dataset(),
+	mode(mode_)
 {
 	// Open file
 	std::ifstream ifs(file);
@@ -54,16 +56,6 @@ FileDataset::FileDataset(const char *file) throw(FileDatasetException) : Dataset
 	ifs.close();
 }
 
-FileDataset::~FileDataset()
-{
-	// Free stimuli
-	for (size_t i = 0; i < stimulusCount; ++i)
-	{
-		delete stimuli[i];
-	}
-	free(stimuli);
-}
-
 Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
 {
 	// Alloc features list
@@ -73,31 +65,57 @@ Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
 	// Parse parts
 	std::stringstream ss(line);
 	double last;
-	bool first = true;
 	size_t i = 0;
 	std::string classLabel;
-	while (ss >> classLabel)
+	if (FEATURES & mode)
 	{
-		if (first)
+		bool first = true;
+		while (ss >> classLabel)
 		{
-			first = false;
-		}
-		else
-		{
-			// Too many features?
-			++i;
-			if (i > featureCount)
+			if (first)
 			{
-				std::stringstream message;
-				message << "Invalid feature count on line " << (stimulusCount + 1) << ": " << line;
-				throw FileDatasetException(message.str());
+				first = false;
 			}
-			
-			// Append feature
-			*featuresIt = last;
-			++featuresIt;
+			else
+			{
+				// Too many features?
+				++i;
+				if (i > featureCount)
+				{
+					std::stringstream message;
+					message << "Invalid feature count on line " << (stimulusCount + 1) << ": " << line;
+					throw FileDatasetException(message.str());
+				}
+				
+				// Append feature
+				*featuresIt = last;
+				++featuresIt;
+			}
+			last = strtod(classLabel.c_str(), NULL);
 		}
-		last = strtod(classLabel.c_str(), NULL);
+	}
+	else
+	{
+		ss >> classLabel;
+	}
+	
+	// No label?
+	if (!(CLASS_LABELS & node))
+	{
+		classLabel = "";
+		
+		// Too many features?
+		++i;
+		if (i > featureCount)
+		{
+			std::stringstream message;
+			message << "Invalid feature count on line " << (stimulusCount + 1) << ": " << line;
+			throw FileDatasetException(message.str());
+		}
+		
+		// Append feature
+		*featuresIt = last;
+		++featuresIt;
 	}
 	
 	// Too less features?
@@ -131,23 +149,37 @@ Dataset::Stimulus* FileDataset::parseFirstLine(const std::string& line, const ch
 	// Parse parts
 	std::stringstream ss(line);
 	double last;
-	bool first = true;
-	while (ss >> classLabel)
+	if (FEATURES & mode)
 	{
-		if (first)
+		bool first = true;
+		while (ss >> classLabel)
 		{
-			first = false;
+			if (first)
+			{
+				first = false;
+			}
+			else
+			{
+				features.push_back(last);
+			}
+			last = strtod(classLabel.c_str(), NULL);
 		}
-		else
-		{
-			features.push_back(last);
-		}
-		last = strtod(classLabel.c_str(), NULL);
+	}
+	else
+	{
+		ss >> classLabel;
+	}
+	
+	// No label?
+	if (!(CLASS_LABELS & node))
+	{
+		classLabel = "";
+		features.push_back(last);
 	}
 	
 	// Set feature count
 	featureCount = features.size();
-	if (featureCount < 1)
+	if ((FEATURES & mode) && featureCount < 1)
 	{
 		throw FileDatasetException(file);
 	}
