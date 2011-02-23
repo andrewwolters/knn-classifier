@@ -1,0 +1,10 @@
+# osx ignore
+.DS_Store
+profile
+
+# xcode ignore
+.xcodeproj/ !*.xcodeproj/project.pbxproj
+build/*
+
+# vim ignore
+*.swp

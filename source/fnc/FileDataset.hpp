@@ -1,9 +1,10 @@
 #ifndef FileDataset__
 #define FileDataset__
 
-#include <kNN/Dataset.hpp>
 #include <string>
-#include <datasets/FileDatasetException.hpp>
+
+#include "FileDatasetException.hpp"
+#include "Dataset.hpp"
 
 /**
  * File dataset class
