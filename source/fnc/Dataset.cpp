@@ -22,35 +22,70 @@ Dataset::Dataset(size_t count, size_t featureCount_) :
 	assert(stimuli);
 }
 
-Dataset::~Dataset()
+void Dataset::reset(size_t count, size_t featureCount_)
 {
-	// Free stimuli
-	for (size_t i = 0; i < stimulusCount; ++i)
-	{
-		delete stimuli[i];
-	}
-	free(stimuli);
+	// Free current
+	free();
+	
+	// Reset
+	stimuli = NULL;
+	stimulusCount = count;
+	featureCount = featureCount_;
+	
+	// Allocate stimuli
+	stimuli = (Stimulus**)calloc(stimulusCount, sizeof(Stimulus*));
+	assert(stimuli);
 }
 
-std::ostream& Dataset::Stimulus::writeToStream(std::ostream& stream, const Dataset *dataset)
+Dataset::~Dataset()
 {
-	for (size_t i = 0; i < dataset->getFeatureCount(); ++i)
+	free();
+}
+
+void Dataset::free()
+{
+	if (stimuli != NULL)
 	{
-		stream << features[i] << " ";
+		// Free stimuli
+		for (size_t i = 0; i < stimulusCount; ++i)
+		{
+			delete stimuli[i];
+		}
+		::free(stimuli);
+		stimuli = NULL;
 	}
-	if (!classLabel.empty())
+	stimulusCount = 0;
+}
+
+std::ostream& Dataset::Stimulus::writeToStream(std::ostream& stream, const Dataset *dataset, bool onlyLabels)
+{
+	if (!onlyLabels)
+	{
+		for (size_t i = 0; i < dataset->getFeatureCount(); ++i)
+		{
+			stream << features[i] << " ";
+		}
+		stream << classLabel;
+	}
+	else
 	{
 		stream << classLabel;
 	}
 	return stream;
 }
 
+std::ostream& Dataset::writeToStream(std::ostream& stream, bool onlyLabels) const
+{
+	for (size_t i = 0; i < getCount(); ++i)
+	{
+		getStimulus(i)->writeToStream(stream, this, onlyLabels) << std::endl;
+	}
+	return stream;
+}
+
 std::ostream& operator<<(std::ostream& stream, const Dataset *dataset)
 {
-	for (size_t i = 0; i < dataset->getCount(); ++i)
-	{
-		dataset->getStimulus(i)->writeToStream(stream, dataset) << std::endl;
-	}
+	return dataset->writeToStream(stream);
 }
 
 std::ostream& operator<<(std::ostream& stream, const Dataset& dataset)

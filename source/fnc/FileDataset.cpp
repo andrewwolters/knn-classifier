@@ -140,7 +140,7 @@ Dataset::Stimulus* FileDataset::parseLine(const std::string& line)
 	assert(stimulus);
 	
 	// Free features
-	free(features);
+	::free(features);
 	
 	return stimulus;
 }
