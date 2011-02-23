@@ -3,8 +3,16 @@
 profile
 
 # xcode ignore
-.xcodeproj/ !*.xcodeproj/project.pbxproj
+*.mode1
+*.mode1v3
+*.mode2v3
+*.perspective
+*.perspectivev3
+*.pbxuser
+
+# build products
 build/*
+*.[oa]
 
 # vim ignore
 *.swp
