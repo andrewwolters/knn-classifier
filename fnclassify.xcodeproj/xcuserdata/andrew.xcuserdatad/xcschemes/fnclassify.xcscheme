@@ -16,7 +16,7 @@
                BlueprintIdentifier = "49722C97131545B600E1E4CD"
                BuildableName = "fnclassify"
                BlueprintName = "fnclassify"
-               ReferencedContainer = "container:FriendlyNeighbourhoodClassifier.xcodeproj">
+               ReferencedContainer = "container:fnclassify.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -49,7 +49,7 @@
             BlueprintIdentifier = "49722C97131545B600E1E4CD"
             BuildableName = "fnclassify"
             BlueprintName = "fnclassify"
-            ReferencedContainer = "container:FriendlyNeighbourhoodClassifier.xcodeproj">
+            ReferencedContainer = "container:fnclassify.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
@@ -74,7 +74,7 @@
             BlueprintIdentifier = "49722C97131545B600E1E4CD"
             BuildableName = "fnclassify"
             BlueprintName = "fnclassify"
-            ReferencedContainer = "container:FriendlyNeighbourhoodClassifier.xcodeproj">
+            ReferencedContainer = "container:fnclassify.xcodeproj">
          </BuildableReference>
       </BuildableProductRunnable>
       <CommandLineArguments>
