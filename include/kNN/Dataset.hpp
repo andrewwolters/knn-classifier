@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include <list>
+#include <ostream>
 
 /**
  * Dataset (base) class
@@ -63,6 +64,15 @@ class Dataset
 				{
 					return features[index];
 				}
+				
+				/**
+				 * Write to stream
+				 *
+				 * @param Stream reference
+				 * @param Dataset
+				 * @return Stream reference
+				 */
+				std::ostream& writeToStream(std::ostream& stream, const Dataset *dataset);
 		};
 	
 	protected:
@@ -191,5 +201,23 @@ class Dataset
 			return true;
 		}
 };
+
+/**
+ * Stream operator for dataset
+ *
+ * @param Stream reference
+ * @param Dataset pointer
+ * @return Stream reference
+ */
+std::ostream& operator<<(std::ostream& stream, const Dataset *dataset);
+
+/**
+ * Stream operator for dataset
+ *
+ * @param Stream reference
+ * @param Dataset
+ * @return Stream reference
+ */
+std::ostream& operator<<(std::ostream& stream, const Dataset& dataset);
 
 #endif

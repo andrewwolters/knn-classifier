@@ -55,17 +55,7 @@ int main(int argc, char* argv[])
 		std::cout << std::endl;
 		
 		// Show dataset
-		std::cout << "Dataset:" << std::endl;
-		for (size_t i = 0; i < dataset.getCount(); ++i)
-		{
-			std::cout << (i + 1) << ": ";
-			Dataset::Stimulus *stimulus = dataset.getStimulus(i);
-			for (size_t j = 0; j < dataset.getFeatureCount(); ++j)
-			{
-				std::cout << stimulus->getFeature(j) << " ";
-			}
-			std::cout << stimulus->getClassLabel() << std::endl;
-		}
+		std::cout << "Dataset:" << std::endl << dataset;
 	}
 	catch (std::exception& e)
 	{

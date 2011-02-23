@@ -30,3 +30,29 @@ Dataset::~Dataset()
 	}
 	free(stimuli);
 }
+
+std::ostream& Dataset::Stimulus::writeToStream(std::ostream& stream, const Dataset *dataset)
+{
+	for (size_t i = 0; i < dataset->getFeatureCount(); ++i)
+	{
+		stream << features[i] << " ";
+	}
+	if (!classLabel.empty())
+	{
+		stream << classLabel;
+	}
+	return stream;
+}
+
+std::ostream& operator<<(std::ostream& stream, const Dataset *dataset)
+{
+	for (size_t i = 0; i < dataset->getCount(); ++i)
+	{
+		dataset->getStimulus(i)->writeToStream(stream, dataset) << std::endl;
+	}
+}
+
+std::ostream& operator<<(std::ostream& stream, const Dataset& dataset)
+{
+	return operator<<(stream, &dataset);
+}
