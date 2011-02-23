@@ -10,17 +10,18 @@
 		49722CB51315463400E1E4CD /* main.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49722CB11315463400E1E4CD /* main.cpp */; };
 		49722CBE131546E900E1E4CD /* Dataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49722CB7131546E900E1E4CD /* Dataset.cpp */; };
 		49722CBF131546E900E1E4CD /* FileDataset.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 49722CB9131546E900E1E4CD /* FileDataset.cpp */; };
+		49722CC71315AD8800E1E4CD /* train_set_001_n100_err0.txt in CopyFiles */ = {isa = PBXBuildFile; fileRef = 49722CC3131549B100E1E4CD /* train_set_001_n100_err0.txt */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
 		49722C96131545B600E1E4CD /* CopyFiles */ = {
 			isa = PBXCopyFilesBuildPhase;
-			buildActionMask = 2147483647;
-			dstPath = /usr/share/man/man1/;
-			dstSubfolderSpec = 0;
+			buildActionMask = 12;
+			dstSubfolderSpec = 16;
 			files = (
+				49722CC71315AD8800E1E4CD /* train_set_001_n100_err0.txt in CopyFiles */,
 			);
-			runOnlyForDeploymentPostprocessing = 1;
+			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXCopyFilesBuildPhase section */
 
