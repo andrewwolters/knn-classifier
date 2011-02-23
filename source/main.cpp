@@ -1,5 +1,101 @@
 #include <datasets/FileDataset.hpp>
 #include <iostream>
+#include <string>
+#include <fstream>
+#include <cstdlib>
+
+/**
+ * Optimize
+ *
+ * @param Input dataset file
+ * @param Output dataset file
+ * @return Exit code
+ */
+int optimize(const char *inputDatasetFile, const char *outputDatasetFile)
+{
+	try
+	{
+		// Open input dataset
+		FileDataset inputDataset(inputDatasetFile, FileDataset::NORMAL);
+		
+		// Optimize
+		// TODO
+		Dataset resultDataset; // or so
+		int k = 3; // or so
+		
+		// Store in file
+		std::ofstream outputStream(outputDatasetFile);
+		outputStream << resultDataset;
+		int result = ((bool)outputStream ? 0 : 1);
+		outputStream.close();
+		
+		// Display result
+		std::cout << "Optimized from dataset (file = '" << inputDatasetFile << "', size = " << inputDataset.getCount() << ")";
+		std::cout << " to dataset (file = '" << outputDatasetFile << "', size = " << resultDataset.getCount() << ")" << std::endl;
+		std::cout << "Found k for kNN: " << k << std::endl;
+		
+		return result;
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return 1; // exit with error
+	}
+}
+
+/**
+ * Classify
+ *
+ * @param Dataset file
+ * @param K (for kNN)
+ * @param Features file
+ * @param Result labels file
+ * @return Exit code
+ */
+int classify(const char *datasetFile, int k, const char *featuresFile, const char *labelsFile)
+{
+	try
+	{
+		// Open dataset
+		FileDataset dataset(datasetFile, FileDataset::NORMAL);
+		
+		// Open features file
+		FileDataset featuresDataset(datasetFile, FileDataset::FEATURES);
+		
+		// Classify
+		// TODO (do something with k)
+		Dataset labelsDataset(featuresDataset.getCount());
+		// labelsDataset.setStimulus(index, new Dataset::Stimulus(); // or so
+		
+		// Store in file
+		std::ofstream outputStream(labelsFile);
+		labelsDataset.writeToStream(outputStream, true);
+		int result = ((bool)outputStream ? 0 : 1);
+		outputStream.close();
+		
+		return result;
+	}
+	catch (std::exception& e)
+	{
+		std::cerr << "Error: " << e.what() << std::endl;
+		return 1; // exit with error
+	}
+}
+
+/**
+ * Help
+ *
+ * @param Argc
+ * @param Argv
+ * @return Exit code
+ */
+int help(int argc, char* argv[])
+{
+	std::cout << "Usage:" << std::endl;
+	std::cout << "\tkNN optimize <dataset file> <result dataset file>" << std::endl;
+	std::cout << "\tkNN classify <dataset file> <k> <features file> <result labels file>" << std::endl;
+	return 1;
+}
 
 /**
  * Main
@@ -9,59 +105,17 @@
  */
 int main(int argc, char* argv[])
 {
-	// Load dataset
-	try
+	// Mode
+	if (argc > 3 && strcmp(argv[1], "optimize") == 0) // optimize
 	{
-		// Load data set
-		std::cout << "Loading dataset..." << std::endl;
-		FileDataset::Mode mode = FileDataset::NORMAL;
-		if (argc > 2)
-		{
-			if (strcmp(argv[2], "features") == 0)
-			{
-				mode = FileDataset::FEATURES;
-			}
-			else if (strcmp(argv[2], "labels") == 0)
-			{
-				mode = FileDataset::CLASS_LABELS;
-			}
-		}
-		FileDataset dataset(argc > 1 ? argv[1] : "dataset.db", mode);
-		std::cout << "Loaded " << dataset.getCount() << " items." << std::endl;
-		std::cout << "Loaded labels: ";
-		std::list<std::string>::const_iterator it = dataset.getClassLabels().begin();
-		std::list<std::string>::const_iterator end = dataset.getClassLabels().end();
-		if (it == end)
-		{
-			std::cout << "no labels loaded" << std::endl;
-		}
-		else
-		{
-			bool first = true;
-			for (; it != end; ++it)
-			{
-				if (first)
-				{
-					first = false;
-				}
-				else
-				{
-					std::cout << ", ";
-				}
-				std::cout << *it;
-			}
-			std::cout << std::endl;
-		}
-		std::cout << std::endl;
-		
-		// Show dataset
-		std::cout << "Dataset:" << std::endl << dataset;
+		return optimize(argv[2], argv[3]);
 	}
-	catch (std::exception& e)
+	else if (argc > 5 && strcmp(argv[1], "classify") == 0) // classify
 	{
-		std::cerr << "Error: " << e.what() << std::endl;
-		return 1; // exit with error
+		return classify(argv[2], atoi(argv[3]), argv[4], argv[5]);
 	}
-	
-	return 0; // exit ok
+	else
+	{
+		return help(argc, argv);
+	}
 }
