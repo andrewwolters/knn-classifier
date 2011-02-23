@@ -1,4 +1,5 @@
-#include <optimizers\HMN.hpp>
+#include <optimizers/HMN.hpp>
+#include <cmath>
 
 using namespace std;
 
@@ -12,7 +13,7 @@ HMN::HMN(Dataset *dataset)
 void HMN::fillRefs()
 {
 	stimuli = new stimulusRef[dataset->getCount()];
-	for(size_t i = 0; i < dataset->getCount(); i++)
+	for (size_t i = 0; i < dataset->getCount(); ++i)
 	{
 		int l=0;
 		list<string> classLabels = dataset->getClassLabels();
@@ -22,10 +23,10 @@ void HMN::fillRefs()
 	}
 }
 
-double dist(Dataset.Stimulus *x, Dataset.Stimulus *y, size_t featurecount)
+double dist(Dataset::Stimulus *x, Dataset::Stimulus *y, size_t featurecount)
 {
 	double sqrSum = 0;
-	for(size_t i = 0; i < featurecount; i++)
+	for (size_t i = 0; i < featurecount; ++i)
 	{
 		double diff = abs(x->getFeature(i) - y->getFeature(i));
 		sqrSum += diff*diff;
@@ -38,18 +39,17 @@ void HMN::computeHMN()
 	fillRefs();
 
 	int c = dataset->getClassLabels().size();
-	for(int i = 0; i < dataset->getCount(); i++)
+	for (int i = 0; i < dataset->getCount(); i++)
 	{
 		stimulusRef x = stimuli[i];
 		double* minDistPerLabel = new double[c];
 		stimulusRef** nearestPerLabel = new stimulusRef*[c];
-		for(int j = 0; j < dataset->getCount(); j++)
+		for (int j = 0; j < dataset->getCount(); ++j)
 		{
-
-			if(i!=j)
+			if (i != j)
 			{
-				double d = dist(x.stimulus(dataset),y.stimulus(dataset), dataset->getFeatureCount());
-				if(d < minDistPerLabel[y.label])
+				double d = dist(x.stimulus(dataset), y.stimulus(dataset), dataset->getFeatureCount());
+				if (d < minDistPerLabel[y.label])
 				{
 					minDistPerLabel[y.label] = d;
 					if(x.label == y.label)
@@ -61,7 +61,9 @@ void HMN::computeHMN()
 					else
 					{
 						if(nearestPerLabel[c]->misses > 0)
+						{
 							nearestPerLabel[c]->misses--;
+						}
 						y.misses++;
 					}
 					nearestPerLabel[c] = y;
@@ -81,25 +83,27 @@ Dataset* HMN::optimize()
 	int countLeft = X;
 
 	//Rule 1
-	for(int i = 0; i < X; i++)
+	for (int i = 0; i < X; ++i)
 	{
 		stimulusRef *x = &stimuli[i];
 		double w = c / (double)X;
 
-		if(w*x->misses + e > (1-w)*x->hits)
+		if (w*x->misses + e > (1 - w)*x->hits)
 		{
 			x->remove = true;
 			countLeft--;
 		}
 		else
+		{
 			left[x->label]++;
+		}
 		Xl[x->label]++;
 	}
 
 	//Rule 2
 	for(int lb = 0; lb < c; lb++)
 	{
-		if(left[lb] < l)
+		if (left[lb] < l)
 		{
 			for(int i = 0; i < X; i++)
 			{
@@ -118,14 +122,14 @@ Dataset* HMN::optimize()
 		stimulusRef *x = &stimuli[i];
 
 		//Rule 3
-		if(c > cc && x->misses < cf*c && x->inDegree() > 0)
+		if (c > cc && x->misses < cf*c && x->inDegree() > 0)
 		{
 			x->remove = false;
 			countLeft++;
 		}
 
 		//Rule 4
-		if(x->hits >= f*Xl[x->label])
+		if (x->hits >= f*Xl[x->label])
 		{
 			x->remove = false;
 			countLeft++;
@@ -135,10 +139,11 @@ Dataset* HMN::optimize()
 	//Make the changes in a new dataset (needs an extended Dataset, still to be developed)
 	int p = 0;
 	Dataset* returnSet = new Dataset(countLeft);
-	for(int i = 0; i < X; i++)
+	for (int i = 0; i < X; ++i)
 	{
 		stimulusRef x = stimuli[i];
 		returnSet->setStimulus(p++, x.stimulus(dataset));
 	}
+	
 	return returnSet;
 }
