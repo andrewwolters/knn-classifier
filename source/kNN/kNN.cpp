@@ -1,5 +1,5 @@
 /*
- *  KNN.cpp
+ *  kNN.cpp
  *  
  *
  *  Created by Tom de Ruijter on 2/21/11.
@@ -7,11 +7,10 @@
  *
  */
 
-#include "KNN.h"
+#include <kNN/kNN.hpp>
 
 KNN::KNN(Dataset *dataset)
 {
-	
 }
 
 KNN::~KNN()
