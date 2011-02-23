@@ -31,6 +31,7 @@ class FileDataset : public Dataset
 		 * Constructor
 		 *
 		 * @param File
+		 * @param Read mode
 		 */
 		FileDataset(const char *file, Mode mode = NORMAL) throw(FileDatasetException);
 	

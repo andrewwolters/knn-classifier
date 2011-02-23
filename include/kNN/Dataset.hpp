@@ -4,6 +4,7 @@
 #include <cstring>
 #include <string>
 #include <list>
+#include <ostream>
 
 /**
  * Dataset (base) class
@@ -44,6 +45,16 @@ class Dataset
 				}
 				
 				/**
+				 * Set class label
+				 *
+				 * @return Label
+				 */
+				void setClassLabel(const std::string& classLabel)
+				{
+					this->classLabel = classLabel;
+				}
+				
+				/**
 				 * Get features
 				 *
 				 * @return Features
@@ -63,6 +74,16 @@ class Dataset
 				{
 					return features[index];
 				}
+				
+				/**
+				 * Write to stream
+				 *
+				 * @param Stream reference
+				 * @param Dataset
+				 * @param Only labels
+				 * @return Stream reference
+				 */
+				std::ostream& writeToStream(std::ostream& stream, const Dataset *dataset, bool onlyLabels = false);
 		};
 	
 	protected:
@@ -70,6 +91,11 @@ class Dataset
 		size_t stimulusCount;
 		size_t featureCount;
 		std::list<std::string> classLabels;
+	
+		/**
+		 * Free
+		 */
+		void free();
 	
 	public:
 		/**
@@ -87,12 +113,20 @@ class Dataset
 		 * @param Stimulus count
 		 * @param Feature count
 		 */
-		Dataset(size_t count, size_t featureCount_);
+		Dataset(size_t count, size_t featureCount_ = 0);
 		
 		/**
 		 * Destructor
 		 */
 		~Dataset();
+		
+		/**
+		 * Reset
+		 *
+		 * @param Stimulus count
+		 * @param Feature count
+		 */
+		void reset(size_t count = 0, size_t featureCount_ = 0);
 		
 		/**
 		 * Get class labels
@@ -190,6 +224,33 @@ class Dataset
 			stimuli[index] = stimulus;
 			return true;
 		}
+		
+		/**
+		 * Write to stream
+		 *
+		 * @param Stream reference
+		 * @param Only labels
+		 * @return Stream reference
+		 */
+		std::ostream& writeToStream(std::ostream& stream, bool onlyLabels = false) const;
 };
+
+/**
+ * Stream operator for dataset
+ *
+ * @param Stream reference
+ * @param Dataset pointer
+ * @return Stream reference
+ */
+std::ostream& operator<<(std::ostream& stream, const Dataset *dataset);
+
+/**
+ * Stream operator for dataset
+ *
+ * @param Stream reference
+ * @param Dataset
+ * @return Stream reference
+ */
+std::ostream& operator<<(std::ostream& stream, const Dataset& dataset);
 
 #endif
