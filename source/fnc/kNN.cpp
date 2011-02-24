@@ -7,7 +7,7 @@
  *
  */
 
-#include <kNN/kNN.hpp>
+#include "kNN.hpp"
 
 KNN::KNN(Dataset *dataset)
 {

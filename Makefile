@@ -1,24 +1,32 @@
 CC			= g++
 BUILDPATH	= build
-INCLUDEPATH	= include
 SOURCEPATH	= source
-INCLUDE		= -I $(INCLUDEPATH)
-TARGET		= $(BUILDPATH)/kNN
+CFLAGS		= -c -Wall -I$(SOURCEPATH)
+LDFLAGS		= 
 
-all: build
+SRC_FILES	= $(wildcard $(SOURCEPATH)/*/*.cpp) $(SOURCEPATH)/main.cpp
+OBJ_FILES	= $(patsubst $(SOURCEPATH)/%.cpp,$(BUILDPATH)/%.o,$(SRC_FILES))
 
-build: compile link
+TARGET		= kNN
+IGNORE		= fnc/HMN.cpp fnc/kNN.cpp
 
-compile:
-	mkdir -p $(BUILDPATH)
-	$(CC) -c $(SOURCEPATH)/kNN/Dataset.cpp -o $(BUILDPATH)/Dataset.o $(INCLUDE)
-	$(CC) -c $(SOURCEPATH)/datasets/FileDataset.cpp -o $(BUILDPATH)/FileDataset.o $(INCLUDE)
-#	$(CC) -c $(SOURCEPATH)/optimizers/HMN.cpp -o $(BUILDPATH)/HMN.o $(INCLUDE)
-	$(CC) -c $(SOURCEPATH)/kNN/kNN.cpp -o $(BUILDPATH)/kNN.o $(INCLUDE)
-	$(CC) -c $(SOURCEPATH)/main.cpp -o $(BUILDPATH)/main.o $(INCLUDE)
+.PHONY: all build_env clean
 
-link:
-	$(CC) -o $(TARGET) $(BUILDPATH)/*.o $(INCLUDE)
+all: $(TARGET)
 
+# build binary from object files
+$(TARGET): $(filter-out $(IGNORE:%.cpp=$(BUILDPATH)/%.o),$(OBJ_FILES))
+	$(CC) -o $@ $^ $(LDFLAGS)
+
+# compile object files from corresponding cpp files
+$(OBJ_FILES): $(BUILDPATH)/%.o:$(SOURCEPATH)/%.cpp | build_env
+	$(CC) $(CFLAGS) $< -o $@
+
+# setup build environment
+build_env:
+	mkdir -p $(sort $(dir $(OBJ_FILES)))
+
+# clean out the build
 clean:
-	rm -f $(BUILDPATH)/*.o
+	rm -rf $(BUILDPATH)
+	rm $(TARGET)

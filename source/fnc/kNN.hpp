@@ -2,7 +2,7 @@
  *  Created by Tom de Ruijter on 2/21/11.
  */
 
-#include <kNN/Dataset.hpp>
+#include "Dataset.hpp"
 
 class KNN
 {
