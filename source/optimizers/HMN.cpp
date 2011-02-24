@@ -41,30 +41,29 @@ void HMN::computeHMN()
 	int c = dataset->getClassLabels().size();
 	for (int i = 0; i < dataset->getCount(); i++)
 	{
-		stimulusRef x = stimuli[i];
+		StimulusRef x = stimuli[i];
 		double* minDistPerLabel = new double[c];
-		stimulusRef** nearestPerLabel = new stimulusRef*[c];
+		StimulusRef** nearestPerLabel = new StimulusRef*[c];
 		for (int j = 0; j < dataset->getCount(); ++j)
 		{
 			if (i != j)
 			{
-				double d = dist(x.stimulus(dataset), y.stimulus(dataset), dataset->getFeatureCount());
-				if (d < minDistPerLabel[y.label])
+				StimulusRef* y = &stimuli[j];
+				double d = dist(x.stimulus(dataset), y->stimulus(dataset), dataset->getFeatureCount());
+				if (d < minDistPerLabel[y->label])
 				{
-					minDistPerLabel[y.label] = d;
-					if(x.label == y.label)
+					minDistPerLabel[y->label] = d;
+					if(x.label == y->label)
 					{
 						if(nearestPerLabel[c]->hits > 0)
 							nearestPerLabel[c]->hits--;
-						y.hits++;
+						y->hits++;
 					}
 					else
 					{
 						if(nearestPerLabel[c]->misses > 0)
-						{
 							nearestPerLabel[c]->misses--;
-						}
-						y.misses++;
+						y->misses++;
 					}
 					nearestPerLabel[c] = y;
 					//No real graph represenation is needed, so only the hits and misses are calculated.

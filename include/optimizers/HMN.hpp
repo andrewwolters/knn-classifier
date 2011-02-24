@@ -14,7 +14,7 @@ class HMN
 		/**
 		 * Struct to represent a stimulus and it's properties needed for HMN
 		 */
-		struct stimulusRef
+		struct StimulusRef
 		{
 			size_t index;
 			int label;
@@ -25,7 +25,7 @@ class HMN
 			/**
 			 * Constructor
 			 */
-			stimulusRef() :
+			StimulusRef() :
 				index(0),
 				label(0),
 				hits(0),
@@ -39,7 +39,7 @@ class HMN
 			 * @param Index
 			 * @param Label
 			 */
-			stimulusRef(size_t index_, int label_) :
+			StimulusRef(size_t index_, int label_) :
 				index(index_),
 				label(label_),
 				hits(0),
@@ -52,7 +52,7 @@ class HMN
 		};
 
 		Dataset *dataset;
-		stimulusRef* stimuli;
+		StimulusRef* stimuli;
 
 		double e;
 		int l;
