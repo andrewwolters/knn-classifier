@@ -8,7 +8,7 @@ SRC_FILES	= $(wildcard $(SOURCEPATH)/*/*.cpp) $(SOURCEPATH)/main.cpp
 OBJ_FILES	= $(patsubst $(SOURCEPATH)/%.cpp,$(BUILDPATH)/%.o,$(SRC_FILES))
 
 TARGET		= kNN
-IGNORE		= fnc/HMN.cpp fnc/kNN.cpp
+IGNORE		= fnc/kNN.cpp
 
 .PHONY: all build_env clean
 
