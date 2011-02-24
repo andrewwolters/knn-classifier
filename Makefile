@@ -29,4 +29,4 @@ build_env:
 # clean out the build
 clean:
 	rm -rf $(BUILDPATH)
-	rm $(TARGET)
+	rm -f $(TARGET)
